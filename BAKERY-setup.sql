@@ -1,4 +1,8 @@
-use eskirk;
+drop table if exists Customers;
+drop table if exists Goods;
+drop table if exists Items;
+drop table if exists Receipts;
+use CSC365Lab2;
 
 create table Customers (
    id int,
@@ -8,7 +12,7 @@ create table Customers (
 );
 
 create table Goods (
-   id int,
+   id varchar(15),
    flavor varchar(20),
    food varchar(10),
    price float,
@@ -22,8 +26,8 @@ create table Items (
 );
 
 create table Receipts (
-   receiptNum int primary key,
-   date DATE,
+   receiptNum int,
+   soldDate varchar(15),
    customerId int,
    unique key(receiptNum) 
 );
