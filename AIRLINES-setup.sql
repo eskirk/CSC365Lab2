@@ -1,7 +1,7 @@
-drop table if exists airlines;
-drop table if exists airports;
-drop table if exists flights;
 use CSC365Lab2;
+drop table if exists flights;
+drop table if exists airports;
+drop table if exists airlines;
 
 create table airlines (
    id int NOT NULL,

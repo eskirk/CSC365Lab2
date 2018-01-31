@@ -11,10 +11,8 @@ def create_insert_statement(csvFile, outputFile, insert):
         outputFile.write(statement)
 
 
-# insert statement template for receipts
-def create_insert_statement_receipts(csvFile, outputFile, insert):
-    date_indexes = [1]
-    print('Receipts')
+# insert statement template for data files with dates
+def create_insert_statement_dates(csvFile, outputFile, insert, date_indexes):
     next(csvFile)
     for row in csvFile:
         statement = insert + '('
@@ -32,17 +30,15 @@ def create_insert_statement_receipts(csvFile, outputFile, insert):
         outputFile.write(statement)
 
 
-# insert statement for reservations
-def create_insert_statement_reservations(csvFile, outputFile, insert):
-    date_indexes = [2, 3]
-    print('Reservations')
+# insert statement for the custom dataset
+def create_insert_statement_custom(csvFile, outputFile, insert, varchar_indexes):
     next(csvFile)
     for row in csvFile:
         statement = insert + '('
         index_count = 0
         for item in row:
-            if index_count in date_indexes:
-                statement += str(', (STR_TO_DATE(' + item.strip().replace('-', ' ') + ', \'%d %M %Y\'))')
+            if index_count in varchar_indexes:
+                statement += str(', \'' + item + '\'')
             else:
                 if index_count == 0:
                     statement += str(item)
@@ -61,8 +57,9 @@ outputFile = open('./INN-populate.sql', 'w')
 csvFile = csv.reader(file)
 headers = ['code', 'room', 'checkIn', 'checkOut', 'rate', 'lastName', 'firstName', 'adults', 'kids']
 insert = 'INSERT INTO reservations (' + ', '.join(headers) + ') VALUES '
+date_indexes = [2, 3]
 
-create_insert_statement_reservations(csvFile, outputFile, insert)
+create_insert_statement_dates(csvFile, outputFile, insert, date_indexes)
 
 # Populate the 'Rooms' table
 file = open('./INN/rooms.csv')
@@ -109,8 +106,10 @@ outputFile = open('./BAKERY-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['receiptNum', 'soldDate', 'customerId']
 insert = 'INSERT INTO receipts (' + ', '.join(headers) + ') VALUES '
+date_indexes = [1]
 
-create_insert_statement_receipts(csvFile, outputFile, insert)
+create_insert_statement_dates(csvFile, outputFile, insert, date_indexes)
+
 
 # ====== AIRLINES ======
 
@@ -141,4 +140,35 @@ insert = 'INSERT INTO flights (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-##### CUSTOM #####
+
+# ====== CUSTOM ======
+
+# Populate the 'Colors' table
+file = open('./CUSTOM/colors.csv')
+outputFile = open('./CUSTOM-populate.sql', 'w')
+csvFile = csv.reader(file)
+headers = ['id', 'name', 'rgb', 'is_trans']
+insert = 'INSERT INTO colors (' + ', '.join(headers) + ') VALUES '
+varchar_indexes = [1, 2, 3]
+
+create_insert_statement_custom(csvFile, outputFile, insert, varchar_indexes)
+
+# Populate the 'Inventories' table
+file = open('./CUSTOM/inventories.csv')
+outputFile = open('./CUSTOM-populate.sql', 'a')
+csvFile = csv.reader(file)
+headers = ['id', 'version', 'set_num']
+insert = 'INSERT INTO inventories (' + ', '.join(headers) + ') VALUES '
+varchar_indexes = [2]
+
+create_insert_statement_custom(csvFile, outputFile, insert, varchar_indexes)
+
+# Populate the 'Colors' table
+file = open('./CUSTOM/inventory_parts.csv')
+outputFile = open('./CUSTOM-populate.sql', 'a')
+csvFile = csv.reader(file)
+headers = ['inventory_id', 'part_num', 'color_id', 'quantity', 'is_spare']
+insert = 'INSERT INTO inventory_parts (' + ', '.join(headers) + ') VALUES '
+varchar_indexes = [1, 4]
+
+create_insert_statement_custom(csvFile, outputFile, insert, varchar_indexes)

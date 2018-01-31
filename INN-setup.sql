@@ -1,6 +1,6 @@
+use CSC365Lab2;
 drop table if exists reservations;
 drop table if exists rooms;
-use CSC365Lab2;
 
 create table rooms (
    roomId varchar(3) NOT NULL,

@@ -1,8 +1,8 @@
+use CSC365Lab2;
 drop table if exists customers;
 drop table if exists goods;
 drop table if exists items;
 drop table if exists receipts;
-use CSC365Lab2;
 
 create table customers (
    id int NOT NULL,
