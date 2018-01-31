@@ -1,33 +1,34 @@
-drop table if exists Customers;
-drop table if exists Goods;
-drop table if exists Items;
-drop table if exists Receipts;
+drop table if exists customers;
+drop table if exists goods;
+drop table if exists items;
+drop table if exists receipts;
 use CSC365Lab2;
 
-create table Customers (
-   id int,
-   lastName varchar(15),
-   firstName varchar(15),
-   unique key(id)
+create table customers (
+   id int NOT NULL,
+   lastName varchar(15) NOT NULL,
+   firstName varchar(15) NOT NULL,
+   CONSTRAINT PRIMARY KEY(id)
 );
 
-create table Goods (
-   id varchar(15),
-   flavor varchar(20),
-   food varchar(10),
-   price float,
-   unique key(id)
+create table goods (
+   id varchar(15) NOT NULL,
+   flavor varchar(20) NOT NULL,
+   food varchar(10) NOT NULL,
+   price decimal NOT NULL,
+   CONSTRAINT PRIMARY KEY(id)
 );
 
-create table Items (
-   receipt int,
-   ordinal int, 
-   item varchar(15)
+create table items (
+   receipt int NOT NULL,
+   ordinal int NOT NULL,  
+   item varchar(15) NOT NULL,
+   CONSTRAINT PRIMARY KEY(receipt, ordinal)
 );
 
-create table Receipts (
-   receiptNum int,
-   soldDate varchar(15),
-   customerId int,
-   unique key(receiptNum) 
+create table receipts (
+   receiptNum int NOT NULL,
+   soldDate date NOT NULL,
+   customerId int NOT NULL,
+   CONSTRAINT PRIMARY KEY(receiptNum)
 );

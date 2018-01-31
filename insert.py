@@ -1,103 +1,144 @@
 import csv
 
 
-# Create an insert statement based on `insert` and write to a file based on `outputFile`
+# basic insert statement
 def create_insert_statement(csvFile, outputFile, insert):
-   next(csvFile)
-   for row in csvFile:
-      values = map((lambda x: x), row)
-      statement = insert + '(' + ", ".join(values) + ');\n'
-      print(statement)
-      outputFile.write(statement)
+    next(csvFile)
+    for row in csvFile:
+        values = map((lambda x: x), row)
+        statement = insert + '(' + ", ".join(values) + ');\n'
+        # print(statement)
+        outputFile.write(statement)
 
 
-##### INN #####
+# insert statement template for receipts
+def create_insert_statement_receipts(csvFile, outputFile, insert):
+    date_indexes = [1]
+    print('Receipts')
+    next(csvFile)
+    for row in csvFile:
+        statement = insert + '('
+        index_count = 0
+        for item in row:
+            if index_count in date_indexes:
+                statement += str(', (STR_TO_DATE(' + item.strip().replace('-', ' ') + ', \'%d %M %Y\'))')
+            else:
+                if index_count == 0:
+                    statement += str(item)
+                else:
+                    statement += str(', ' + item)
+            index_count += 1
+        statement += ');\n'
+        outputFile.write(statement)
 
-### Populate the 'Reservations' table
-file = open('./INN/Reservations.csv')
+
+# insert statement for reservations
+def create_insert_statement_reservations(csvFile, outputFile, insert):
+    date_indexes = [2, 3]
+    print('Reservations')
+    next(csvFile)
+    for row in csvFile:
+        statement = insert + '('
+        index_count = 0
+        for item in row:
+            if index_count in date_indexes:
+                statement += str(', (STR_TO_DATE(' + item.strip().replace('-', ' ') + ', \'%d %M %Y\'))')
+            else:
+                if index_count == 0:
+                    statement += str(item)
+                else:
+                    statement += str(', ' + item)
+            index_count += 1
+        statement += ');\n'
+        outputFile.write(statement)
+
+
+# ====== INN ======
+
+# Populate the 'Reservations' table
+file = open('./INN/reservations.csv')
 outputFile = open('./INN-populate.sql', 'w')
 csvFile = csv.reader(file)
 headers = ['code', 'room', 'checkIn', 'checkOut', 'rate', 'lastName', 'firstName', 'adults', 'kids']
-insert = 'INSERT INTO Reservations (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO reservations (' + ', '.join(headers) + ') VALUES '
 
-create_insert_statement(csvFile, outputFile, insert)
+create_insert_statement_reservations(csvFile, outputFile, insert)
 
-### Populate the 'Rooms' table
-file = open('./INN/Rooms.csv')
+# Populate the 'Rooms' table
+file = open('./INN/rooms.csv')
 outputFile = open('./INN-populate.sql', 'a')
 csvFile = csv.reader(file)
-headers = ['roomId', 'roomName', 'beds', 'bedType', 'maxOccupancy', 'basePrice', 'decor'] 
-insert = 'INSERT INTO Rooms (' + ', '.join(headers) + ') VALUES '
+headers = ['roomId', 'roomName', 'beds', 'bedType', 'maxOccupancy', 'basePrice', 'decor']
+insert = 'INSERT INTO rooms (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
 
+# ====== BAKERY ======
 
-##### BAKERY #####
-
-### Populate the 'Customers' table
-file = open('./BAKERY/Customers.csv')
+# Populate the 'Customers' table
+file = open('./BAKERY/customers.csv')
 outputFile = open('./BAKERY-populate.sql', 'w')
 csvFile = csv.reader(file)
 headers = ['id', 'lastName', 'firstName']
-insert = 'INSERT INTO Customers (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO customers (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-### Populate the 'Goods' table
-file = open('./BAKERY/Goods.csv')
+# Populate the 'Goods' table
+file = open('./BAKERY/goods.csv')
 outputFile = open('./BAKERY-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['id', 'flavor', 'food', 'price']
-insert = 'INSERT INTO Goods (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO goods (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-### Populate the 'Items' table
-file = open('./BAKERY/Items.csv')
+# Populate the 'Items' table
+file = open('./BAKERY/items.csv')
 outputFile = open('./BAKERY-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['receipt', 'ordinal', 'item']
-insert = 'INSERT INTO Items (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO items (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-### Populate the 'Receipts' table
+# Populate the 'Receipts' table
 file = open('./BAKERY/receipts.csv')
 outputFile = open('./BAKERY-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['receiptNum', 'soldDate', 'customerId']
-insert = 'INSERT INTO Receipts (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO receipts (' + ', '.join(headers) + ') VALUES '
 
-create_insert_statement(csvFile, outputFile, insert)
+create_insert_statement_receipts(csvFile, outputFile, insert)
 
+# ====== AIRLINES ======
 
-
-##### AIRLINES #####
-
-### Populate the 'Airlines' table
+# Populate the 'Airlines' table
 file = open('./AIRLINES/airlines.csv')
 outputFile = open('./AIRLINES-populate.sql', 'w')
 csvFile = csv.reader(file)
 headers = ['id', 'airline', 'abbreviation', 'country']
-insert = 'INSERT INTO Airlines (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO airlines (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-### Populate the 'Airports' table
+# Populate the 'Airports' table
 file = open('./AIRLINES/airports100.csv')
 outputFile = open('./AIRLINES-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['city', 'airportCode', 'airportName', 'country', 'countryAbbrev']
-insert = 'INSERT INTO Airports (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO airports (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
 
-### Populate the 'Flights' table
+# Populate the 'Flights' table
 file = open('./AIRLINES/flights.csv')
 outputFile = open('./AIRLINES-populate.sql', 'a')
 csvFile = csv.reader(file)
 headers = ['airline', 'flightNo', 'sourceAirport', 'destAirport']
-insert = 'INSERT INTO Flights (' + ', '.join(headers) + ') VALUES '
+insert = 'INSERT INTO flights (' + ', '.join(headers) + ') VALUES '
 
 create_insert_statement(csvFile, outputFile, insert)
+
+##### CUSTOM #####

@@ -1,28 +1,31 @@
-drop table if exists Airlines;
-drop table if exists Airports;
-drop table if exists Flights;
+drop table if exists airlines;
+drop table if exists airports;
+drop table if exists flights;
 use CSC365Lab2;
 
-create table Airlines (
-   id int primary key,
-   airline varchar(30),
-   abbreviation varchar(20),
-   country varchar(10),
-   unique key(id)
+create table airlines (
+   id int NOT NULL,
+   airline varchar(30) NOT NULL,
+   abbreviation varchar(20) NOT NULL,
+   country varchar(10) NOT NULL,
+   CONSTRAINT PRIMARY KEY(id)
 );
 
-create table Airports (
-   city varchar(20) not null,
-   airportCode varchar(3) not null,
-   airportName varchar(50) not null,
-   country varchar(20) not null,
-   countryAbbrev varchar(10) not null,
-   unique key(airportCode)
+create table airports (
+   city varchar(20) NOT NULL,
+   airportCode varchar(3) NOT NULL,
+   airportName varchar(50) NOT NULL,
+   country varchar(20) NOT NULL,
+   countryAbbrev varchar(10) NOT NULL,
+   CONSTRAINT UNIQUE KEY(airportCode)
 );
 
-create table Flights (
-   airline int,
-   flightNo int,
-   sourceAirport varchar(3),
-   destAirport varchar(3)
+create table flights (
+   airline int NOT NULL,
+   flightNo int NOT NULL,
+   sourceAirport varchar(3) NOT NULL,
+   destAirport varchar(3) NOT NULL,
+   CONSTRAINT PRIMARY KEY(airline, flightNo),
+   FOREIGN KEY(sourceAirport)
+      REFERENCES airports (airportCode)
 );
